@@ -1,4 +1,4 @@
-import { isDown, justPressed, clearJustPressed } from './input.js';
+import { isDown, justPressed, clearJustPressed } from './input.js?v=2';
 import { Player } from './player.js';
 import { Camera } from './camera.js';
 import { Level } from './level.js';

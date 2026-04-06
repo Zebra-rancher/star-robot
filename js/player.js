@@ -1,4 +1,4 @@
-import { isDown, justPressed } from './input.js';
+import { isDown, justPressed } from './input.js?v=2';
 
 export class Player {
   constructor(x, y) {

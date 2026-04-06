@@ -1,9 +1,13 @@
 // Tracks which keys are currently held down
 const keys = {};
+// Queue of keys pressed this frame (consumed by justPressed)
+let pressedThisFrame = new Set();
 
 window.addEventListener('keydown', (e) => {
+  if (!keys[e.code]) {
+    pressedThisFrame.add(e.code);
+  }
   keys[e.code] = true;
-  // Prevent spacebar from scrolling the page
   if (e.code === 'Space') e.preventDefault();
 });
 
@@ -11,28 +15,25 @@ window.addEventListener('keyup', (e) => {
   keys[e.code] = false;
 });
 
-// Helper: check if a key is pressed right now
+// Also treat click/tap as Enter (for menus)
+window.addEventListener('mousedown', () => {
+  pressedThisFrame.add('Enter');
+});
+window.addEventListener('touchstart', () => {
+  pressedThisFrame.add('Enter');
+});
+
+// Check if a key is held down right now
 export function isDown(code) {
   return !!keys[code];
 }
 
-// For one-shot actions (like jumping), track "just pressed"
-const justPressedKeys = {};
-
-window.addEventListener('keydown', (e) => {
-  if (!keys[e.code]) justPressedKeys[e.code] = true;
-});
-
+// Check if a key was freshly pressed this frame (one-shot)
 export function justPressed(code) {
-  if (justPressedKeys[code]) {
-    justPressedKeys[code] = false;
-    return true;
-  }
-  return false;
+  return pressedThisFrame.has(code);
 }
 
+// Call once at the END of each frame to reset
 export function clearJustPressed() {
-  for (const key in justPressedKeys) {
-    justPressedKeys[key] = false;
-  }
+  pressedThisFrame = new Set();
 }
